@@ -45,5 +45,5 @@ public class JobResponse {
 
     private JobStatus status;
 
-    private CompanyResponse company;
+    private CompanySummaryResponse company;
 }

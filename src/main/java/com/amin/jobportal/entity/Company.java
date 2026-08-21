@@ -36,6 +36,4 @@ public class Company {
     @CreationTimestamp
     @Column(nullable = false, updatable = false, name = "created_at")
     private LocalDateTime createdAt;
-
-
 }
