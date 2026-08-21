@@ -9,6 +9,8 @@ import com.amin.jobportal.dto.response.JobSummaryResponse;
 import com.amin.jobportal.entity.User;
 import com.amin.jobportal.service.JobService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticatedPrincipal;
@@ -42,7 +44,7 @@ public class JobController {
     @PreAuthorize("hasRole('EMPLOYER')")
     @PostMapping
     public ResponseEntity<JobResponse> createJob(@RequestBody CreateJobRequest createJobRequest, @AuthenticationPrincipal User currentUser){
-        return ResponseEntity.ok(jobService.create(createJobRequest, currentUser));
+        return new ResponseEntity<>(jobService.create(createJobRequest, currentUser), HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('EMPLOYER')")

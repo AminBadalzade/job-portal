@@ -9,12 +9,13 @@ import com.amin.jobportal.entity.Company;
 import com.amin.jobportal.entity.Job;
 import com.amin.jobportal.entity.User;
 import com.amin.jobportal.enums.Role;
+import com.amin.jobportal.exception.ForbiddenException;
+import com.amin.jobportal.exception.ResourceNotFoundException;
 import com.amin.jobportal.mapper.JobMapper;
 import com.amin.jobportal.repository.JobRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -45,10 +46,10 @@ public class JobServiceImpl implements JobService {
     @Override
     public JobResponse update(Long id, UpdateJobRequest request, User user) {
         Job job = jobRepository.findById(id).orElseThrow(() ->
-                new RuntimeException("Couldn't find job with id: " + id));
+                new ResourceNotFoundException("Job not found with id: " + id));
 
         if(!job.getCompany().getId().equals(user.getCompany().getId())){
-            throw new RuntimeException("You are not authorized to access other company's details");
+            throw new ForbiddenException("You are not authorized to access other job's details");
         }
 
         jobMapper.updateFromRequest(request, job);
@@ -58,13 +59,13 @@ public class JobServiceImpl implements JobService {
     @Transactional
     @Override
     public void delete(Long jobId, User user) {
-        Job job = jobRepository.findById(jobId).orElseThrow(() -> new RuntimeException("Jon not found with id: " + jobId));
+        Job job = jobRepository.findById(jobId).orElseThrow(() -> new ResourceNotFoundException("Job not found with id: " + jobId));
 
         if(user.getRole() == Role.ADMIN){
             jobRepository.delete(job);
             return;
         } else if(!user.getCompany().getId().equals(job.getCompany().getId()) ) {
-            throw new RuntimeException("You are not authorized to delete job");
+            throw new ForbiddenException("You are not authorized to delete job");
         }
         jobRepository.delete(job);
     }
@@ -72,7 +73,7 @@ public class JobServiceImpl implements JobService {
     @Override
     public JobResponse getById(Long jobId) {
         Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new RuntimeException("Job not found with id: " + jobId));
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found with id: " + jobId));
 
         return jobMapper.toResponse(job);
     }
