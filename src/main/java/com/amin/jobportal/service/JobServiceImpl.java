@@ -13,8 +13,11 @@ import com.amin.jobportal.exception.ForbiddenException;
 import com.amin.jobportal.exception.ResourceNotFoundException;
 import com.amin.jobportal.mapper.JobMapper;
 import com.amin.jobportal.repository.JobRepository;
+import com.amin.jobportal.specification.JobSpecs;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
@@ -78,11 +81,50 @@ public class JobServiceImpl implements JobService {
         return jobMapper.toResponse(job);
     }
 
+    private Specification<Job> buildSpec(JobSearchRequest jobSearchRequest) {
+        Specification<Job> spec = Specification.unrestricted();
+
+        if(jobSearchRequest.getTitle() != null){
+            spec = spec.and(JobSpecs.containsTitle(jobSearchRequest.getTitle()));
+        }
+
+        if(jobSearchRequest.getCity() != null){
+            spec = spec.and(JobSpecs.hasCity(jobSearchRequest.getCity()));
+        }
+
+        if(jobSearchRequest.getCountry() != null){
+            spec = spec.and(JobSpecs.hasCountry(jobSearchRequest.getCountry()));
+        }
+
+        if(jobSearchRequest.getExperienceLevel() != null){
+            spec = spec.and(JobSpecs.hasExperienceLevel(jobSearchRequest.getExperienceLevel()));
+        }
+
+        if(jobSearchRequest.getEmploymentType() != null){
+            spec = spec.and(JobSpecs.hasEmploymentType(jobSearchRequest.getEmploymentType()));
+        }
+
+        if(jobSearchRequest.getWorkType() != null){
+            spec = spec.and(JobSpecs.hasWorkType(jobSearchRequest.getWorkType()));
+        }
+
+        if(jobSearchRequest.getSalaryMin() != null){
+            spec = spec.and(JobSpecs.hasSalaryMin(jobSearchRequest.getSalaryMin()));
+        }
+
+        if(jobSearchRequest.getSalaryMax() != null){
+            spec = spec.and(JobSpecs.hasSalaryMax(jobSearchRequest.getSalaryMax()));
+        }
+
+        return spec;
+    }
 
 
     @Override
-    public Page<JobSummaryResponse> search(JobSearchRequest request) {
-        return null;
+    public Page<JobSummaryResponse> search(JobSearchRequest request, Pageable pageable) {
+        Specification<Job> jobSpecification = buildSpec(request);
+        Page<Job> jobs = jobRepository.findAll(jobSpecification, pageable);
+        return jobs.map(jobMapper::toSummaryResponse);
     }
 
     @Override

@@ -9,6 +9,8 @@ import com.amin.jobportal.dto.response.JobSummaryResponse;
 import com.amin.jobportal.entity.User;
 import com.amin.jobportal.service.JobService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +38,12 @@ public class JobController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<Page<JobSummaryResponse>> getJob(@RequestBody JobSearchRequest jobSearchRequest){
-        Page<JobSummaryResponse> jobs = jobService.search(jobSearchRequest);
+    public ResponseEntity<Page<JobSummaryResponse>> searchJobs(@RequestBody JobSearchRequest jobSearchRequest,
+                                                          @RequestParam(name = "pageNo", required = false, defaultValue = "0") int pageNo,
+                                                           @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize){
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+
+        Page<JobSummaryResponse> jobs = jobService.search(jobSearchRequest,pageable);
         return ResponseEntity.ok(jobs);
     }
 

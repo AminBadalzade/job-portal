@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @Setter
 public class JobSearchRequest {
     @Size(max = 100)
-    private String keyword;
+    private String title;
 
     @Size(max = 100)
     private String city;
