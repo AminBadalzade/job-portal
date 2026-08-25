@@ -12,7 +12,6 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface CompanyMapper {
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "jobs", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     Company toEntity(CompanyRequest companyRequest);
 

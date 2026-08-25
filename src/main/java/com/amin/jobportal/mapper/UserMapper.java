@@ -16,9 +16,6 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "company", ignore = true)
-    @Mapping(target = "jobApplications", ignore = true)
-    @Mapping(target = "resumes", ignore = true)
     User toEntity(RegisterRequest request);
 
 }
