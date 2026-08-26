@@ -8,6 +8,7 @@ import com.amin.jobportal.dto.response.JobResponse;
 import com.amin.jobportal.dto.response.JobSummaryResponse;
 import com.amin.jobportal.entity.User;
 import com.amin.jobportal.service.JobService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,7 +39,7 @@ public class JobController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<Page<JobSummaryResponse>> searchJobs(@RequestBody JobSearchRequest jobSearchRequest,
+    public ResponseEntity<Page<JobSummaryResponse>> searchJobs(@Valid @RequestBody JobSearchRequest jobSearchRequest,
                                                           @RequestParam(name = "pageNo", required = false, defaultValue = "0") int pageNo,
                                                            @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize){
         Pageable pageable = PageRequest.of(pageNo, pageSize);
@@ -49,13 +50,13 @@ public class JobController {
 
     @PreAuthorize("hasRole('EMPLOYER')")
     @PostMapping
-    public ResponseEntity<JobResponse> createJob(@RequestBody CreateJobRequest createJobRequest, @AuthenticationPrincipal User currentUser){
+    public ResponseEntity<JobResponse> createJob(@Valid @RequestBody CreateJobRequest createJobRequest, @AuthenticationPrincipal User currentUser){
         return new ResponseEntity<>(jobService.create(createJobRequest, currentUser), HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('EMPLOYER')")
     @PutMapping("/{id}")
-    public ResponseEntity<JobResponse> updateJob(@PathVariable Long id, @RequestBody UpdateJobRequest updateJobRequest, @AuthenticationPrincipal User currentUser){
+    public ResponseEntity<JobResponse> updateJob(@PathVariable Long id, @Valid @RequestBody UpdateJobRequest updateJobRequest, @AuthenticationPrincipal User currentUser){
         return ResponseEntity.ok(jobService.update(id, updateJobRequest, currentUser));
     }
 
