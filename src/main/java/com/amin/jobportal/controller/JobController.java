@@ -40,8 +40,7 @@ public class JobController {
 
     @PostMapping("/search")
     public ResponseEntity<Page<JobSummaryResponse>> searchJobs(@Valid @RequestBody JobSearchRequest jobSearchRequest,
-                                                          @RequestParam(name = "pageNo", required = false, defaultValue = "0") int pageNo,
-                                                           @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize){
+                                                          @RequestParam(name = "pageNo", required = false, defaultValue = "0") int pageNo, @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize){
         Pageable pageable = PageRequest.of(pageNo, pageSize);
 
         Page<JobSummaryResponse> jobs = jobService.search(jobSearchRequest,pageable);

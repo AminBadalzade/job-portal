@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface JobRepository extends JpaRepository<Job, Long>, JpaSpecificationExecutor<Job> {
     List<Job> getJobByCompanyId(Long companyId);
+    void deleteByCompanyId(Long companyId);
+
 }
