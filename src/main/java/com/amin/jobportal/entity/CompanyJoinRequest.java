@@ -2,12 +2,17 @@ package com.amin.jobportal.entity;
 
 import com.amin.jobportal.enums.JoinRequestStatus;
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "company_join_requests")
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CompanyJoinRequest {
 
     @Id
@@ -24,7 +29,7 @@ public class CompanyJoinRequest {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private JoinRequestStatus status;
+    private JoinRequestStatus status = JoinRequestStatus.PENDING;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

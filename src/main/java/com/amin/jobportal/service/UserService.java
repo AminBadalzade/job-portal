@@ -1,9 +1,7 @@
 package com.amin.jobportal.service;
 
-import com.amin.jobportal.dto.request.LoginRequest;
 import com.amin.jobportal.dto.request.RegisterRequest;
 import com.amin.jobportal.dto.request.UpdateUserRequest;
-import com.amin.jobportal.dto.response.AuthResponse;
 import com.amin.jobportal.dto.response.UserResponse;
 
 public interface UserService {

@@ -6,9 +6,9 @@ import com.amin.jobportal.dto.response.CompanyResponse;
 import com.amin.jobportal.dto.response.CompanySummaryResponse;
 import com.amin.jobportal.dto.response.JobSummaryResponse;
 import com.amin.jobportal.entity.Company;
-import com.amin.jobportal.entity.CompanyJoinRequest;
 import com.amin.jobportal.entity.Job;
 import com.amin.jobportal.entity.User;
+import com.amin.jobportal.exception.ConflictException;
 import com.amin.jobportal.exception.ForbiddenException;
 import com.amin.jobportal.exception.ResourceNotFoundException;
 import com.amin.jobportal.mapper.CompanyMapper;
@@ -17,9 +17,6 @@ import com.amin.jobportal.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -77,11 +74,11 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CompanyResponse create(CompanyRequest request, User user) {
            if (user.getCompany() != null){
-               throw new ForbiddenException("You are working in company: " + user.getCompany().getName());
+               throw new ConflictException("You are working in company: " + user.getCompany().getName());
            }
 
            if (companyRepository.findCompanyByName(request.getName()).isPresent()){
-               throw new ForbiddenException("You cannot create existing company");
+               throw new ConflictException("You cannot create existing company");
            }
 
            Company company = companyMapper.toEntity(request);

@@ -1,14 +1,11 @@
 package com.amin.jobportal.service;
 
-import com.amin.jobportal.dto.request.LoginRequest;
 import com.amin.jobportal.dto.request.RegisterRequest;
 import com.amin.jobportal.dto.request.UpdateUserRequest;
-import com.amin.jobportal.dto.response.AuthResponse;
 import com.amin.jobportal.dto.response.UserResponse;
 import com.amin.jobportal.entity.User;
 import com.amin.jobportal.mapper.UserMapper;
 import com.amin.jobportal.repository.UserRepository;
-import org.mapstruct.factory.Mappers;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

@@ -20,6 +20,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ConflictException ex, HttpServletRequest request){
+        ErrorResponse response = new ErrorResponse(ex.getMessage(), HttpStatus.CONFLICT.value(), LocalDateTime.now(), request.getRequestURI());
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
 
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ForbiddenException ex, HttpServletRequest request){

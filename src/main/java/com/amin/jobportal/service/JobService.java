@@ -5,14 +5,10 @@ import com.amin.jobportal.dto.request.JobSearchRequest;
 import com.amin.jobportal.dto.request.UpdateJobRequest;
 import com.amin.jobportal.dto.response.JobResponse;
 import com.amin.jobportal.dto.response.JobSummaryResponse;
-import com.amin.jobportal.entity.Job;
 import com.amin.jobportal.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.w3c.dom.stylesheets.LinkStyle;
 
-import java.awt.*;
 import java.util.List;
 
 public interface JobService {
