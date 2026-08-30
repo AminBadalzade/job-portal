@@ -77,7 +77,7 @@ public class Job {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private JobStatus status;
+    private JobStatus status = JobStatus.OPEN;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)

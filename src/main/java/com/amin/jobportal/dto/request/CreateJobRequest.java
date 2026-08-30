@@ -47,6 +47,4 @@ public class CreateJobRequest {
 
     private LocalDateTime expiresAt;
 
-    @NotNull(message = "Company ID is required")
-    private Long companyId;
 }

@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,11 +20,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/jobs")
 public class JobController {
     private final JobService jobService;
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("createdAt", "salaryMin", "title");
 
     public JobController(JobService jobService) {
         this.jobService = jobService;
@@ -38,8 +41,21 @@ public class JobController {
 
     @PostMapping("/search")
     public ResponseEntity<Page<JobSummaryResponse>> searchJobs(@Valid @RequestBody JobSearchRequest jobSearchRequest,
-                                                          @RequestParam(name = "pageNo", required = false, defaultValue = "0") int pageNo, @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize){
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
+                                                          @RequestParam(name = "pageNo", required = false, defaultValue = "0") int pageNo, @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                                               @RequestParam(defaultValue = "createdAt") String sortBy,
+                                                               @RequestParam(defaultValue = "DESC") String sortDirection ){
+        // user cannot search by sensitive credentials
+        String safeSortBy = ALLOWED_SORT_FIELDS.contains(sortBy) ? sortBy : "createdAt";
+        Sort.Direction direction;
+        try {
+            direction = Sort.Direction.fromString(sortDirection);
+        } catch (IllegalArgumentException e) {
+            direction = Sort.Direction.DESC;
+        }
+
+        int safePageSize = Math.min(pageSize, 50);
+
+        Pageable pageable = PageRequest.of(pageNo, safePageSize, Sort.by(direction, safeSortBy));
 
         Page<JobSummaryResponse> jobs = jobService.search(jobSearchRequest,pageable);
         return ResponseEntity.ok(jobs);

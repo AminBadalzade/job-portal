@@ -6,6 +6,7 @@ import com.amin.jobportal.service.CustomerUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -35,10 +36,18 @@ public class SecurityConfig {
         http.csrf(csrf-> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/api/register").permitAll();
-                    auth.requestMatchers("/api/login").permitAll();
-                    auth.requestMatchers("/api/jobs/search").permitAll();
-            auth.anyRequest().authenticated();
+                    // Public Endpoints
+                    auth.requestMatchers("/api/register", "/api/login").permitAll();
+                    auth.requestMatchers("/api/jobs/search", "/api/jobs/{id}").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/api/companies/**").permitAll();
+
+                    // Employer endpoints
+                    auth.requestMatchers(HttpMethod.POST, "/api/companies").hasRole("EMPLOYER");
+                    auth.requestMatchers("/api/companies/*/join").hasRole("EMPLOYER");
+                    auth.requestMatchers("/api/companies/*/join-requests/**").hasRole("EMPLOYER");
+
+                    // All other endpoints require authentication
+                    auth.anyRequest().authenticated();
         });
 
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

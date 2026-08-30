@@ -16,12 +16,12 @@ public class JobSpecs {
 
     public static Specification<Job> hasCity(String city){
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get("city"), city);
+                criteriaBuilder.equal(criteriaBuilder.lower(root.get("city")), city.toLowerCase());
     }
 
     public static Specification<Job> hasCountry(String country){
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get("country"), country);
+                criteriaBuilder.equal(criteriaBuilder.lower(root.get("country")), country.toLowerCase());
     }
 
     public static Specification<Job> hasExperienceLevel(ExperienceLevel experienceLevel){

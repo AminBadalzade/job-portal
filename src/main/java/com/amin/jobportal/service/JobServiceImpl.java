@@ -12,6 +12,7 @@ import com.amin.jobportal.enums.Role;
 import com.amin.jobportal.exception.ForbiddenException;
 import com.amin.jobportal.exception.ResourceNotFoundException;
 import com.amin.jobportal.mapper.JobMapper;
+import com.amin.jobportal.repository.CompanyRepository;
 import com.amin.jobportal.repository.JobRepository;
 import com.amin.jobportal.specification.JobSpecs;
 import jakarta.transaction.Transactional;
@@ -27,22 +28,26 @@ public class JobServiceImpl implements JobService {
 
     private final JobRepository jobRepository;
     private final JobMapper jobMapper;
+    private final CompanyRepository companyRepository;
 
-    public JobServiceImpl(JobRepository jobRepository, JobMapper jobMapper) {
+
+    public JobServiceImpl(JobRepository jobRepository, JobMapper jobMapper, CompanyRepository companyRepository) {
         this.jobRepository = jobRepository;
         this.jobMapper = jobMapper;
+        this.companyRepository = companyRepository;
     }
 
     @Transactional
     @Override
     public JobResponse create(CreateJobRequest request, User user) {
-       Company company = user.getCompany();
-       Job job = jobMapper.toEntity(request);
-       job.setCompany(company);
+        Company company = companyRepository.findById(user.getCompany().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Company not found"));
 
-       Job dbJob = jobRepository.save(job);
+        Job job = jobMapper.toEntity(request);
+        job.setCompany(company);
 
-       return jobMapper.toResponse(dbJob);
+        Job dbJob = jobRepository.save(job);
+        return jobMapper.toResponse(dbJob);
     }
 
     @Transactional

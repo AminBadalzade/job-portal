@@ -3,6 +3,7 @@ package com.amin.jobportal.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -47,5 +48,27 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    // when @preAuthorize rejects request, this will be thrown
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request){
+        ErrorResponse response = new ErrorResponse(
+                "You don't have permission to perform this action",
+                HttpStatus.FORBIDDEN.value(),
+                LocalDateTime.now(),
+                request.getRequestURI());
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
+    // for unexpected exceptions
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleUnexpected(Exception ex, HttpServletRequest request){
+        ErrorResponse response = new ErrorResponse(
+                "Something went wrong. Please try again later.",
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                LocalDateTime.now(),
+                request.getRequestURI());
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
