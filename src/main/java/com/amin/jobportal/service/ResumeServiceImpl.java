@@ -1,30 +1,113 @@
 package com.amin.jobportal.service;
 
+import com.amin.jobportal.dto.response.DownloadFileResponse;
 import com.amin.jobportal.dto.response.ResumeResponse;
+import com.amin.jobportal.entity.Resume;
+import com.amin.jobportal.entity.User;
+import com.amin.jobportal.exception.ConflictException;
+import com.amin.jobportal.exception.ResourceNotFoundException;
+import com.amin.jobportal.mapper.ResumeMapper;
+import com.amin.jobportal.repository.ResumeRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 @Service
 public class ResumeServiceImpl implements ResumeService {
-    @Override
-    public ResumeResponse upload(MultipartFile multipartFile) {
-        return null;
+
+    private final ResumeRepository resumeRepository;
+    private final FileStorageService fileStorageService;
+    private final ResumeMapper resumeMapper;
+
+    public ResumeServiceImpl(ResumeRepository resumeRepository, FileStorageService fileStorageService, ResumeMapper resumeMapper) {
+        this.resumeRepository = resumeRepository;
+        this.fileStorageService = fileStorageService;
+        this.resumeMapper = resumeMapper;
     }
 
     @Override
-    public List<ResumeResponse> getMyResumes() {
-        return List.of();
+    public ResumeResponse upload(MultipartFile multipartFile, User user) throws IOException {
+        String storageKey = null;
+
+        try {
+            storageKey = fileStorageService.saveFile(multipartFile);
+
+            Resume resume = new Resume();
+            resume.setOriginalFileName(multipartFile.getOriginalFilename());
+            resume.setStorageKey(storageKey);
+            resume.setUser(user);
+
+            Resume savedResume = resumeRepository.save(resume);
+
+            return resumeMapper.toResponse(savedResume);
+
+        } catch (Exception e) {
+            if (storageKey != null) {
+                fileStorageService.deleteFile(storageKey);
+            }
+
+            throw e;
+        }
     }
 
     @Override
-    public ResumeResponse getById(Long id) {
-        return null;
+    public List<ResumeResponse> getMyResumes(User user) {
+        List<Resume> resumes =
+                resumeRepository.findAllByUserId(user.getId());
+
+        return resumes.stream()
+                .map(resumeMapper::toResponse)
+                .toList();
     }
 
     @Override
-    public void delete(Long id) {
+    public DownloadFileResponse downloadById(Long id, User user) throws FileNotFoundException {
 
+        Resume resume = resumeRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Resume not found with id: " + id
+                        ));
+
+        if (!resume.getUser().getId().equals(user.getId())) {
+            throw new ConflictException(
+                    "You cannot access other user's resumes"
+            );
+        }
+
+        File file = fileStorageService.getDownloadFile(
+                resume.getStorageKey()
+        );
+
+        return new DownloadFileResponse(
+                file,
+                resume.getOriginalFileName()
+        );
+    }
+
+    @Transactional
+    @Override
+    public void delete(Long id, User user) {
+
+        Resume resume = resumeRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Resume not found with id: " + id));
+
+        if (!resume.getUser().getId().equals(user.getId())) {
+            throw new ConflictException("You cannot access other user's resumes");
+        }
+
+        try {
+            fileStorageService.deleteFile(resume.getStorageKey());
+        } catch (IOException e) {
+            throw new RuntimeException("Could not delete resume file", e);
+        }
+
+        resumeRepository.delete(resume);
     }
 }

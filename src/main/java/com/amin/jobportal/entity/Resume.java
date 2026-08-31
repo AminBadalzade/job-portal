@@ -20,10 +20,10 @@ public class Resume {
     private Long id;
 
     @Column(nullable = false, name = "file_name")
-    private String fileName;
+    private String originalFileName;
 
     @Column(nullable = false, unique = true, name = "file_url")
-    private String fileUrl;
+    private String storageKey;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false, name = "uploaded_at")

@@ -17,7 +17,7 @@ public class ResumeResponse {
 
     private String fileName;
 
-    private String fileUrl;
+    private String downloadUrl;
 
     private LocalDateTime uploadedAt;
 }

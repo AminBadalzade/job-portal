@@ -46,6 +46,9 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/companies/*/join").hasRole("EMPLOYER");
                     auth.requestMatchers("/api/companies/*/join-requests/**").hasRole("EMPLOYER");
 
+                    // JOB_SEEKER endpoints
+                    auth.requestMatchers("/api/resumes", "/api/resumes/**").hasRole("JOB_SEEKER");
+
                     // All other endpoints require authentication
                     auth.anyRequest().authenticated();
         });
