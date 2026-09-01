@@ -7,5 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ResumeRepository extends JpaRepository<Resume, Long> {
+    Resume findByIdAndUserId(Long resumeId,Long userId);
     List<Resume> findAllByUserId(Long userId);
 }
