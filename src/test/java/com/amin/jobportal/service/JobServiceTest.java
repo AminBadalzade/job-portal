@@ -12,6 +12,7 @@ import com.amin.jobportal.enums.Role;
 import com.amin.jobportal.exception.ForbiddenException;
 import com.amin.jobportal.exception.ResourceNotFoundException;
 import com.amin.jobportal.mapper.JobMapper;
+import com.amin.jobportal.repository.CompanyRepository;
 import com.amin.jobportal.repository.JobRepository;
 import org.glassfish.jaxb.runtime.v2.runtime.output.SAXOutput;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,9 @@ public class JobServiceTest {
 
     @InjectMocks
     JobServiceImpl jobService;
+
+    @Mock
+    private CompanyRepository companyRepository;
 
     @Mock
     JobMapper jobMapper;
@@ -332,6 +336,8 @@ public class JobServiceTest {
         jobResponse.setTitle("Backend Engineer");
 
 
+        when(companyRepository.findById(10L))
+                .thenReturn(Optional.of(company));
         when(jobMapper.toEntity(createJobRequest)).thenReturn(jobToSave);
         when(jobRepository.save(jobToSave)).thenReturn(savedJob);
         when(jobMapper.toResponse(savedJob)).thenReturn(jobResponse);
@@ -346,6 +352,7 @@ public class JobServiceTest {
         verify(jobMapper).toEntity(createJobRequest);
         verify(jobRepository).save(jobToSave);
         verify(jobMapper).toResponse(savedJob);
+        verify(companyRepository).findById(10L);
     }
 
 
