@@ -5,6 +5,7 @@ import com.amin.jobportal.dto.response.JobApplicationCompanyResponse;
 import com.amin.jobportal.dto.response.JobApplicationSeekerResponse;
 import com.amin.jobportal.entity.User;
 import com.amin.jobportal.service.JobApplicationService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api")
 public class JobApplicationController {
@@ -33,7 +35,7 @@ public class JobApplicationController {
 
     @PreAuthorize("hasRole('JOB_SEEKER')")
     @GetMapping("/job-applications")
-    public ResponseEntity<List<JobApplicationSeekerResponse>> getApplications(@AuthenticationPrincipal User user){
+    public ResponseEntity<List<JobApplicationSeekerResponse>> getMyApplications(@AuthenticationPrincipal User user){
         return ResponseEntity.ok(jobApplicationService.getMyApplications(user));
     }
 
@@ -69,7 +71,7 @@ public class JobApplicationController {
 
     @PreAuthorize("hasRole('JOB_SEEKER')")
     @DeleteMapping("/job-applications/{id}")
-    public ResponseEntity<Void> deleteApplication(@PathVariable Long id,@AuthenticationPrincipal User user){
+    public ResponseEntity<Void> withdrawApplication(@PathVariable Long id,@AuthenticationPrincipal User user){
         jobApplicationService.withdraw(id, user);
         return ResponseEntity.noContent().build();
     }

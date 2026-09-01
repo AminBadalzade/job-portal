@@ -4,6 +4,7 @@ import com.amin.jobportal.dto.response.DownloadFileResponse;
 import com.amin.jobportal.dto.response.ResumeResponse;
 import com.amin.jobportal.entity.User;
 import com.amin.jobportal.service.ResumeService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +22,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/api/resumes")
+@SecurityRequirement(name = "bearerAuth")
 public class ResumesController {
 
     private final ResumeService resumeService;

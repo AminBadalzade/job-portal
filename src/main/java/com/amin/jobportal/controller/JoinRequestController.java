@@ -4,6 +4,7 @@ import com.amin.jobportal.dto.response.CompanyJoinRequestResponse;
 import com.amin.jobportal.entity.CompanyJoinRequest;
 import com.amin.jobportal.entity.User;
 import com.amin.jobportal.service.JoinRequestService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/companies")
+@SecurityRequirement(name = "bearerAuth")
 public class JoinRequestController {
 
    private final JoinRequestService joinRequestService;

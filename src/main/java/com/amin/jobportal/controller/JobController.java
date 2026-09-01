@@ -8,6 +8,7 @@ import com.amin.jobportal.dto.response.JobResponse;
 import com.amin.jobportal.dto.response.JobSummaryResponse;
 import com.amin.jobportal.entity.User;
 import com.amin.jobportal.service.JobService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -61,18 +62,21 @@ public class JobController {
         return ResponseEntity.ok(jobs);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('EMPLOYER')")
     @PostMapping
     public ResponseEntity<JobResponse> createJob(@Valid @RequestBody CreateJobRequest createJobRequest, @AuthenticationPrincipal User currentUser){
         return new ResponseEntity<>(jobService.create(createJobRequest, currentUser), HttpStatus.CREATED);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('EMPLOYER')")
     @PutMapping("/{id}")
     public ResponseEntity<JobResponse> updateJob(@PathVariable Long id, @Valid @RequestBody UpdateJobRequest updateJobRequest, @AuthenticationPrincipal User currentUser){
         return ResponseEntity.ok(jobService.update(id, updateJobRequest, currentUser));
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasAnyRole('EMPLOYER', 'ADMIN')")
     @DeleteMapping("/{jobId}")
     public ResponseEntity<Void> deleteJob(@PathVariable Long jobId, @AuthenticationPrincipal User currentUser){
@@ -81,6 +85,7 @@ public class JobController {
         return ResponseEntity.noContent().build();    }
 
 
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('EMPLOYER')")
     @GetMapping("/{jobId}/applicants")
     public ResponseEntity<List<JobApplicationCompanyResponse>> getAllApplicationForJob(@PathVariable Long jobId){

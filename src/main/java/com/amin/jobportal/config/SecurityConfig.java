@@ -40,6 +40,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/register", "/api/login").permitAll();
                     auth.requestMatchers("/api/jobs/search", "/api/jobs/{id}").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/api/companies/**").permitAll();
+                    auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
 
                     // Employer endpoints
                     auth.requestMatchers(HttpMethod.POST, "/api/companies").hasRole("EMPLOYER");

@@ -7,6 +7,7 @@ import com.amin.jobportal.dto.response.CompanySummaryResponse;
 import com.amin.jobportal.dto.response.JobSummaryResponse;
 import com.amin.jobportal.entity.User;
 import com.amin.jobportal.service.CompanyService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,12 +44,14 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.getJobsByCompanyId(id));
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('EMPLOYER')")
     @PutMapping("/{id}")
     public ResponseEntity<CompanyResponse> update(@PathVariable Long id, @Valid @RequestBody UpdateCompanyRequest updateCompanyRequest, @AuthenticationPrincipal User user ){
         return new ResponseEntity<>(companyService.update(id, updateCompanyRequest, user), HttpStatus.OK);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('EMPLOYER')")
     @PostMapping
     public ResponseEntity<CompanyResponse> create(@Valid @RequestBody CompanyRequest companyRequest,@AuthenticationPrincipal User user){
@@ -56,6 +59,7 @@ public class CompanyController {
                 .body(companyService.create(companyRequest, user));
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('EMPLOYER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id, @AuthenticationPrincipal User user){
