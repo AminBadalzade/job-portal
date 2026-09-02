@@ -8,6 +8,7 @@ import com.amin.jobportal.entity.JobApplication;
 import com.amin.jobportal.entity.Resume;
 import com.amin.jobportal.entity.User;
 import com.amin.jobportal.enums.ApplicationStatus;
+import com.amin.jobportal.enums.JobStatus;
 import com.amin.jobportal.exception.ConflictException;
 import com.amin.jobportal.exception.ForbiddenException;
 import com.amin.jobportal.exception.ResourceNotFoundException;
@@ -16,8 +17,11 @@ import com.amin.jobportal.repository.JobApplicationRepository;
 import com.amin.jobportal.repository.JobRepository;
 import com.amin.jobportal.repository.ResumeRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -37,7 +41,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
 
 
     @Override
-    public JobApplicationSeekerResponse apply(Long jobId, User user, JobApplicationRequest jobApplicationRequest) {
+    public JobApplicationSeekerResponse apply(Long jobId, User user,@Valid @RequestBody JobApplicationRequest jobApplicationRequest) {
         Job job = jobRepository.findById(jobId).orElseThrow(() -> new ResourceNotFoundException("Not found job with id: " + jobId));
         Resume resume = resumeRepository.findById(jobApplicationRequest.getResumeId()).orElseThrow(() -> new ResourceNotFoundException("Not found resume with id: " + jobApplicationRequest.getResumeId()));
 
@@ -47,6 +51,14 @@ public class JobApplicationServiceImpl implements JobApplicationService {
 
         if(jobApplicationRepository.findByJobIdAndUserId(jobId, user.getId()) != null){
             throw new ConflictException("You have already applied to this job");
+        }
+
+        if (job.getStatus() != JobStatus.OPEN) {
+            throw new ConflictException("This job is not currently accepting applications");
+        }
+
+        if (job.getExpiresAt() != null && job.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new ConflictException("This job posting has expired");
         }
 
         JobApplication jobApplication = new JobApplication();
