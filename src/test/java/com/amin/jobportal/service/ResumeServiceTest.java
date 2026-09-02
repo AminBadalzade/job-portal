@@ -5,6 +5,7 @@ import com.amin.jobportal.dto.response.ResumeResponse;
 import com.amin.jobportal.entity.Resume;
 import com.amin.jobportal.entity.User;
 import com.amin.jobportal.exception.ConflictException;
+import com.amin.jobportal.exception.ForbiddenException;
 import com.amin.jobportal.exception.ResourceNotFoundException;
 import com.amin.jobportal.mapper.ResumeMapper;
 import com.amin.jobportal.repository.ResumeRepository;
@@ -101,7 +102,7 @@ public class ResumeServiceTest {
     }
 
     @Test
-    void GetMyResumesSuccesfully(){
+    void GetMyResumesSuccessfully(){
         Resume secondResume = new Resume();
         secondResume.setId(2L);
         secondResume.setUser(user);
@@ -172,7 +173,7 @@ public class ResumeServiceTest {
 
         when(resumeRepository.findById(1L)).thenReturn(Optional.of(resume));
 
-        assertThatThrownBy(() -> resumeService.downloadById(1L, user)).isInstanceOf(ConflictException.class).hasMessage("You cannot access other user's resumes");
+        assertThatThrownBy(() -> resumeService.downloadById(1L, user)).isInstanceOf(ForbiddenException.class).hasMessage("You cannot access other user's resumes");
 
         verify(fileStorageService, never()).getDownloadFile(anyString());
     }
@@ -206,7 +207,7 @@ public class ResumeServiceTest {
         when(resumeRepository.findById(1L)).thenReturn(Optional.of(resume));
 
         assertThatThrownBy(() -> resumeService.delete(1L, user))
-                .isInstanceOf(ConflictException.class)
+                .isInstanceOf(ForbiddenException.class)
                 .hasMessage("You cannot access other user's resumes");
 
         verify(fileStorageService, never()).deleteFile(anyString());
