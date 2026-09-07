@@ -19,5 +19,5 @@ public class UserResponse {
 
     private Role role;
 
-    private CompanyResponse company;
+    private MyCompanyResponse company;
 }
