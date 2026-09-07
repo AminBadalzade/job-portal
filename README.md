@@ -15,8 +15,7 @@ cp .env.example .env && docker-compose up
 ```
 Then open **Swagger UI**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
-<img width="1433" height="890" alt="image" src="https://github.com/user-attachments/assets/f691f03a-7917-4b28-a7da-75b29e87e251" />
-
+![Swagger UI](docs/swagger.png)
 
 ## Tech Stack
 
@@ -120,8 +119,7 @@ Job seeker can withdraw at any point prior to a terminal decision
 
 ## Database / Domain Model
 
-<img width="835" height="767" alt="image" src="https://github.com/user-attachments/assets/8afd01dc-cf44-4696-a430-05b4c704c17c" />
-
+![Database Design](docs/database-design.png)
 
 Core entities and relationships:
 
@@ -202,7 +200,7 @@ docker-compose up
 ```
 The API will be available at `http://localhost:8080`.
 
-<img width="753" height="435" alt="image" src="https://github.com/user-attachments/assets/87a44715-6c01-41b9-a38b-413289d9f695" />
+![Docker Build Success](docs/docker-built-succesfully.png)
 
 ## Swagger / API Documentation
 
