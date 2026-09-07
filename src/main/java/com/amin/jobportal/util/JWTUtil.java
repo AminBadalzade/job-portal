@@ -16,7 +16,7 @@ import java.util.Date;
 @Component
 public class JWTUtil {
     private final SecretKey secretKey;
-    private final long Expiration_Time = 1000*60*60;
+    private final long Expiration_Time = 1000*60*15;
 
     public JWTUtil(@Value("${jwt.secret}") String secret){
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));

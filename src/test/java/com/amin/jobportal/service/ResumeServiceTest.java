@@ -32,9 +32,11 @@ import java.util.Optional;
 @ExtendWith(MockitoExtension.class)
 public class ResumeServiceTest {
 
-    @Mock private ResumeRepository resumeRepository;
+    @Mock
+    private ResumeRepository resumeRepository;
 
-    @Mock private FileStorageService fileStorageService;
+    @Mock
+    private FileStorageService fileStorageService;
 
     @Mock
     private ResumeMapper resumeMapper;

@@ -1,6 +1,7 @@
 package com.amin.jobportal.service;
 
 import com.amin.jobportal.dto.response.CompanyJoinRequestResponse;
+import com.amin.jobportal.dto.response.EmployerJoinRequestResponse;
 import com.amin.jobportal.entity.CompanyJoinRequest;
 import com.amin.jobportal.entity.User;
 
@@ -13,4 +14,6 @@ public interface JoinRequestService {
     CompanyJoinRequestResponse approveRequest(Long companyId, Long requestId, User currentUser);
 
     CompanyJoinRequestResponse rejectRequest(Long companyId, Long requestId, User currentUser);
+
+    List<EmployerJoinRequestResponse> getMyJoinRequests(User user);
 }

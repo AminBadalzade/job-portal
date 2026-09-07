@@ -1,6 +1,5 @@
 package com.amin.jobportal.config;
 
-import com.amin.jobportal.entity.User;
 import com.amin.jobportal.filters.JwtAuthFilter;
 import com.amin.jobportal.service.CustomerUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> {
                     // Public Endpoints
-                    auth.requestMatchers("/api/register", "/api/login").permitAll();
+                    auth.requestMatchers("/api/register", "/api/login", "/api/refresh",
+                            "/api/logout").permitAll();
                     auth.requestMatchers("/api/jobs/search", "/api/jobs/{id}").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/api/companies/**").permitAll();
                     auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
@@ -48,7 +48,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/companies/*/join-requests/**").hasRole("EMPLOYER");
 
                     // JOB_SEEKER endpoints
-                    auth.requestMatchers("/api/resumes", "/api/resumes/**").hasRole("JOB_SEEKER");
+                    auth.requestMatchers("/api/resumes").hasRole("JOB_SEEKER");
 
                     // All other endpoints require authentication
                     auth.anyRequest().authenticated();

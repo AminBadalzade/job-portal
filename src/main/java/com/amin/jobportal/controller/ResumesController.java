@@ -10,6 +10,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +32,7 @@ public class ResumesController {
         this.resumeService = resumeService;
     }
 
+    @PreAuthorize("hasRole('JOB_SEEKER')")
     @PostMapping
     public ResponseEntity<ResumeResponse> uploadResume(
             @RequestParam("file") MultipartFile multipartFile,
@@ -40,6 +42,7 @@ public class ResumesController {
         return ok(response);
     }
 
+    @PreAuthorize("hasRole('JOB_SEEKER')")
     @GetMapping
     public ResponseEntity<List<ResumeResponse>> getAllResumes(@AuthenticationPrincipal User user) {
      return ok(resumeService.getMyResumes(user));
@@ -76,6 +79,7 @@ public class ResumesController {
                 .body(resource);
     }
 
+    @PreAuthorize("hasRole('JOB_SEEKER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteResumeById(@PathVariable Long id,@AuthenticationPrincipal User user){
         resumeService.delete(id, user);

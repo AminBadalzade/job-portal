@@ -4,6 +4,10 @@ import com.amin.jobportal.dto.request.RegisterRequest;
 import com.amin.jobportal.dto.request.UpdateUserRequest;
 import com.amin.jobportal.dto.response.UserResponse;
 import com.amin.jobportal.entity.User;
+import com.amin.jobportal.enums.Role;
+import com.amin.jobportal.exception.ConflictException;
+import com.amin.jobportal.exception.ForbiddenException;
+import com.amin.jobportal.exception.ResourceNotFoundException;
 import com.amin.jobportal.mapper.UserMapper;
 import com.amin.jobportal.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,7 +32,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse register(RegisterRequest request) {
         if(userRepository.existsUserByEmail(request.getEmail())){
-            throw new IllegalArgumentException("Such email registered before");
+            throw new ConflictException("User with this email already exists");
+        }
+
+        if (request.getRole() == Role.ADMIN) {
+            throw new ForbiddenException("ADMIN registration is not allowed");
         }
 
        User user = mapper.toEntity(request);
@@ -41,8 +49,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserResponse getCurrentUser() {
-        return null;
+    public UserResponse getMe(User user) {
+        User currentUser =  userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return mapper.toResponse(currentUser);
     }
 
     @Override

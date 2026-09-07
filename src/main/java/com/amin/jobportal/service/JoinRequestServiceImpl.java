@@ -1,6 +1,7 @@
 package com.amin.jobportal.service;
 
 import com.amin.jobportal.dto.response.CompanyJoinRequestResponse;
+import com.amin.jobportal.dto.response.EmployerJoinRequestResponse;
 import com.amin.jobportal.entity.Company;
 import com.amin.jobportal.entity.CompanyJoinRequest;
 import com.amin.jobportal.entity.User;
@@ -13,6 +14,7 @@ import com.amin.jobportal.repository.CompanyJoinRequestRepository;
 import com.amin.jobportal.repository.CompanyRepository;
 import com.amin.jobportal.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -140,5 +142,19 @@ public class JoinRequestServiceImpl implements  JoinRequestService {
         }
     }
 
+    @Override
+    @Transactional
+    public List<EmployerJoinRequestResponse> getMyJoinRequests(User user) {
 
+        List<CompanyJoinRequest> requests =
+                companyJoinRequestRepository
+                        .findByUserIdOrderByCreatedAtDesc(
+                                user.getId(),
+                                PageRequest.of(0, 5)
+                        );
+
+        return requests.stream()
+                .map(companyJoinRequestMapper::toMyResponse)
+                .toList();
+    }
 }

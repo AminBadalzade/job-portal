@@ -1,7 +1,9 @@
 package com.amin.jobportal.repository;
 
 import com.amin.jobportal.entity.CompanyJoinRequest;
+import com.amin.jobportal.entity.User;
 import com.amin.jobportal.enums.JoinRequestStatus;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,7 +19,9 @@ public interface CompanyJoinRequestRepository extends JpaRepository<CompanyJoinR
 
     boolean existsByUserIdAndCompanyIdAndStatus(Long userId, Long companyId, JoinRequestStatus status);
 
-    Optional<CompanyJoinRequest> findByIdAndCompanyId(Long id, Long CompanyId);
+    Optional<CompanyJoinRequest> findByIdAndCompanyId(Long id, Long companyId);
 
+    // give us latest requests
+    List<CompanyJoinRequest> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
 
 }
