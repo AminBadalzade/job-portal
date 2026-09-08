@@ -17,6 +17,8 @@ Then open **Swagger UI**: [http://localhost:8080/swagger-ui/index.html](http://l
 
 ![Swagger UI](docs/swagger.png)
 
+🎥 **[Watch the demo video](https://lnkd.in/p/d4X-yfwj)** - a walkthrough of the job seeker, employer, and company-join workflows in action.
+
 ## Tech Stack
 
 | Category | Technology |
@@ -116,6 +118,26 @@ Company staff makes a decision  →  INTERVIEW → ACCEPTED
         ↓
 Job seeker can withdraw at any point prior to a terminal decision
 ```
+
+## Frontend
+
+A Next.js (React) frontend consumes this API end-to-end, covering the job seeker, employer, and company-owner workflows described above.
+
+**Job seeker view**
+
+![Job listings and filters](docs/Jobs_Listing.jpg)
+![Job details](docs/Job_details.jpg)
+![Apply with resume](docs/Apply_with_resume.jpg)
+
+**Employer / company owner view**
+
+![Employer dashboard](docs/Employee_Dashboard.jpg)
+![Applicant review](docs/Applicants_review.jpg)
+![Create job posting](docs/Create_job.jpg)
+
+**Company join request**
+
+![Join request approval](docs/Join_Requests.jpg)
 
 ## Database / Domain Model
 
@@ -231,13 +253,3 @@ Docker Compose (see Quick Start above) is the recommended path. To run without D
 1. Have a MySQL instance running locally.
 2. Set the required environment variables (or edit `application.properties` directly).
 3. `mvn spring-boot:run`
-
-## Future Improvements
-
-Deliberately out of scope for this iteration, to keep focus on core business logic and authorization design:
-- Scheduled expiration of jobs past their `expiresAt` date (straightforward addition via Spring's `@Scheduled`)
-- Email notifications on application status change (via Spring Mail)
-- Extended test coverage for `JoinRequestService`, `JobApplicationService`, and controller/integration-level tests
-- Refresh token support
-
-A frontend client (React) is planned as a separate project, consuming this API directly - the DTOs and endpoint structure above are designed with that integration in mind.
