@@ -156,7 +156,9 @@ Core entities and relationships:
 
 **Authentication**
 - `POST /api/register` - register a new user with a role
-- `POST /api/login` - authenticate and receive a JWT
+- `POST /api/login` - authenticate and receive a JWT + refresh token
+- `POST /api/refresh` - exchange a valid refresh token for a new JWT
+- `POST /api/logout` - invalidate the current session
 
 **Companies**
 - `GET /api/companies`, `GET /api/companies/{id}`, `GET /api/companies/{id}/jobs`
@@ -164,6 +166,7 @@ Core entities and relationships:
 
 **Join Requests**
 - `POST /api/companies/{companyId}/join`
+- `GET /api/join-requests/me` - current user's own join requests
 - `GET /api/companies/{companyId}/join-requests` *(owner only)*
 - `PUT /api/companies/{companyId}/join-requests/{requestId}/approve` *(owner only)*
 - `PUT /api/companies/{companyId}/join-requests/{requestId}/reject` *(owner only)*
@@ -171,6 +174,7 @@ Core entities and relationships:
 **Jobs**
 - `GET /api/jobs/{id}`, `POST /api/jobs/search` (filterable, paginated, sortable)
 - `POST /api/jobs`, `PUT /api/jobs/{id}`, `DELETE /api/jobs/{jobId}`
+- `GET /api/jobs/{jobId}/applicants` - applicant list for a job *(company staff)*
 
 **Applications**
 - `POST /api/jobs/{jobId}/applications` - apply to a job
@@ -187,12 +191,14 @@ Full request/response schemas are available via Swagger UI (see below) rather th
 
 ## Authentication
 
-Authentication is stateless and JWT-based:
+Authentication is stateless and JWT-based, with refresh token rotation for longer-lived sessions:
 
 1. `POST /api/register` creates a user with a BCrypt-hashed password and a chosen role.
-2. `POST /api/login` authenticates credentials via Spring Security's `AuthenticationManager` and issues a signed JWT.
-3. Protected endpoints require `Authorization: Bearer <token>`, validated by a custom filter backed by a `UserDetailsService` implementation.
-4. Method-level authorization uses `@PreAuthorize` for role gates (e.g. `hasRole('EMPLOYER')`), layered with service-level ownership/membership checks that role annotations alone can't express (e.g. "staff of *this specific* company").
+2. `POST /api/login` authenticates credentials via Spring Security's `AuthenticationManager` and issues a signed JWT along with a refresh token.
+3. `POST /api/refresh` exchanges a valid refresh token for a new access token once the original JWT expires, without requiring the user to log in again.
+4. `POST /api/logout` invalidates the current session.
+5. Protected endpoints require `Authorization: Bearer <token>`, validated by a custom filter backed by a `UserDetailsService` implementation.
+6. Method-level authorization uses `@PreAuthorize` for role gates (e.g. `hasRole('EMPLOYER')`), layered with service-level ownership/membership checks that role annotations alone can't express (e.g. "staff of *this specific* company").
 
 ## Testing
 
